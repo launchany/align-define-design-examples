@@ -1,0 +1,126 @@
+#%RAML 1.0
+title: Bookstore Shopping API Example
+version: 1.0
+baseUri: https://www.example.com
+baseUriParameters:
+  defaultHost:
+    required: false
+    default: www.example.com
+    example:
+      value: www.example.com
+    displayName: defaultHost
+    type: string
+protocols:
+- HTTPS
+documentation:
+- title: Bookstore Shopping API Example
+  content: The Bookstore Example REST-based API supports the shopping experience of an online bookstore. The API includes the following capabilities and operations...
+types:
+  ListBooksResponse:
+    displayName: ListBooksResponse
+    description: A list of book summaries as a result of a list or filter request...
+    type: object
+    properties:
+      books:
+        required: false
+        displayName: books
+        type: array
+        items:
+          type: BookSummary
+  BookSummary:
+    displayName: BookSummary
+    description: Summarizes a book that is stocked by the book store...
+    type: object
+    properties:
+      bookId:
+        required: false
+        displayName: bookId
+        description: An internal identifier, separate from the ISBN, that identifies the book within the inventory
+        type: string
+      isbn:
+        required: false
+        displayName: isbn
+        description: The ISBN of the book
+        type: string
+      title:
+        required: false
+        displayName: title
+        description: The book title, e.g. A Practical Approach to API Design
+        type: string
+      authors:
+        required: false
+        displayName: authors
+        type: array
+        items:
+          type: BookAuthor
+  BookAuthor:
+    displayName: BookAuthor
+    description: Represents a single author for a book. Since a book may have more than one author, ...
+    type: object
+    properties:
+      authorId:
+        required: false
+        displayName: authorId
+        description: An internal identifier that references the author
+        type: string
+      fullName:
+        required: false
+        displayName: fullName
+        description: The full name of the author, e.g. D. Keith Casey
+        type: string
+/books:
+  get:
+    displayName: ListBooks
+    description: Provides a paginated list of books based on the search criteria provided...
+    queryParameters:
+      q:
+        required: false
+        displayName: q
+        description: A query string to use for filtering books by title and description. If not provided, all available books will be listed...
+        type: string
+      offset:
+        required: false
+        default: 0
+        example:
+          value: 0
+        displayName: offset
+        description: A offset from which the list of books are retrieved, where an offset of 0 means the first page of results...
+        type: integer
+        minimum: 0
+        format: int32
+      limit:
+        required: false
+        default: 25
+        example:
+          value: 25
+        displayName: limit
+        description: Number of records to be included in API call, defaulting to 25 records at a time if not provided...
+        type: integer
+        minimum: 1
+        maximum: 100
+        format: int32
+    headers:
+      Authorization:
+        required: true
+        displayName: Authorization
+        description: An OAuth 2.0 access token that authorizes your app to call this operation...
+        type: string
+    responses:
+      200:
+        description: Success
+        headers:
+          Content-Type:
+            default: application/json
+            displayName: Content-Type
+            type: string
+        body:
+          application/json:
+            displayName: response
+            description: Success
+            type: ListBooksResponse
+      401:
+        description: Request failed. Received when a request is made with invalid API credentials...
+        body: {}
+      403:
+        description: Request failed. Received when a request is made with valid API credentials towards an API operation or resource you do not have access to.
+        body: {}

@@ -1,0 +1,48 @@
+# API Name: "Bookstore Shopping API Example"
+#
+# The Bookstore Example REST-based API supports the shopping experience of an online bookstore. The API includes the following capabilities and operations...
+#
+
+"A list of book summaries as a result of a list or filter request..."
+type ListBooksResponse {
+    books: [BookSummary!]
+}
+
+"Summarizes a book that is stocked by the book store..."
+type BookSummary {
+    "An internal identifier, separate from the ISBN, that identifies the book within the inventory"
+    bookId: String!
+    "The ISBN of the book"
+    isbn: String!
+    "The book title, e.g. A Practical Approach to API Design"
+    title: String!
+    authors: [BookAuthor!]
+}
+
+"Represents a single author for a book. Since a book may have more than one author, ..."
+type BookAuthor {
+    "An internal identifier that references the author"
+    authorId: String!
+    "The full name of the author, e.g. D. Keith Casey"
+    fullName: String!
+}
+
+input ListBooksInput {
+    "A query string to use for filtering books by title and description. If not provided, all available books will be listed..."
+    q: String!
+    "A offset from which the list of books are retrieved, where an offset of 0 means the first page of results..."
+    offset: Int!
+    "Number of records to be included in API call, defaulting to 25 records at a time if not provided..."
+    limit: Int!
+    "An OAuth 2.0 access token that authorizes your app to call this operation..."
+    authorization: String!
+}
+
+type Query {
+    "Provides a paginated list of books based on the search criteria provided..."
+    listBooks(input: ListBooksInput!): ListBooksResponse!
+}
+
+schema {
+    query: Query
+}

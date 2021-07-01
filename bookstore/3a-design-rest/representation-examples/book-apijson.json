@@ -1,0 +1,28 @@
+{
+  "data": {
+    "type": "books",
+    "id": "12345",
+        "attributes": {
+        "isbn": "978-0321834577",
+        "title": "Implementing Domain-Driven Design",
+        "description": "With Implementing Domain-Driven Design, Vaughn has made an important contribution not only to the literature of the Domain-Driven Design community, but also to the literature of the broader enterprise application architecture field."
+    },
+    "relationships": {
+      "authors": {
+          "data": [
+	      {"id": "765", "type": "authors"}
+	  ]
+        }
+    },
+    "included": [
+  	    {
+		"type": "authors",
+		"id": "765",
+		"fullName": "Vaughn Vernon",
+		"links": {
+		    "self": { "href": "/authors/765" },
+		    "authoredBooks": { "href": "/books?authorId=765" }
+		}
+	    }
+  }
+}

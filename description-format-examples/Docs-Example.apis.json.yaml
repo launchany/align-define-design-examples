@@ -1,0 +1,51 @@
+name: Bookstore Example
+type: Index
+description: The Bookstore API supports the shopping experience of an online bookstore, along with ...
+tags:
+  - Application Programming Interface
+  - API
+created: '2020-12-10'
+modified: '2020-12-10'
+url: http://example.com/apis.json
+specificationVersion: '0.14'
+apis:
+- name: Bookstore Shopping API
+  description: The Bookstore Example REST-based API supports the shopping experience of an online bookstore
+  humanURL: http://example.com
+  baseURL: http://api.example.com
+  tags:
+    - API
+    - Application Programming Interface
+
+  properties:
+    - type: Documentation
+      url: https://example.com/documentation
+    - type: OpenAPI
+      url: http://example.com/openapi.json
+    - type: JSONSchema
+      url: http://example.com/json-schema.json
+
+  contact:
+    - FN: APIs.json
+      email: info@apisjson.org
+      X-twitter: apisjson
+
+specifications:
+  - name: OpenAPI
+    description: OpenAPI is used as the contract for all of our APIs.
+    url: https://openapis.org
+  - name: JSON Schema
+    description: JSON Schema is used to define all of the underlying objects used.
+    url: https://json-schema.org/
+
+common:
+  - type: Signup
+    url: https://example.com/signup
+  - type: Authentication
+    url: http://example.com/authentication
+  - type: Login
+    url: https://example.com/login
+  - type: Blog
+    url: http://example.com/blog
+  - type: Pricing
+    url: http://example.com/pricing

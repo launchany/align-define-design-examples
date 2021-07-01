@@ -1,0 +1,75 @@
+openapi: 3.0.0
+info:
+  title: Bookstore Shopping API Example
+  description: The Bookstore Example REST-based API supports the shopping experience of an online bookstore. The API includes the following capabilities and operations...
+  contact: { }
+  version: '1.0'
+paths:
+  /books:
+    get:
+      tags:
+      - Books
+      summary: Returns a paginated list of books
+      description: Provides a paginated list of books based on the search criteria provided...
+      operationId: ListBooks
+      parameters:
+      - name: q
+        in: query
+        description: A query string to use for filtering books by title and description. If not provided, all available books will be listed...
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListBooksResponse'
+        401:
+          description: Request failed. Received when a request is made with invalid API credentials...
+        403:
+          description: Request failed. Received when a request is made with valid API credentials towards an API operation or resource you do not have access to.
+      deprecated: false
+components:
+  schemas:
+    ListBooksResponse:
+      title: ListBooksResponse
+      type: object
+      properties:
+        books:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookSummary'
+          description: ''
+      description: "A list of book summaries as a result of a list or filter request..."
+    BookSummary:
+      title: BookSummary
+      type: object
+      properties:
+        bookId:
+          type: string
+          description: An internal identifier, separate from the ISBN, that identifies the book within the inventory
+        isbn:
+          type: string
+          description: The ISBN of the book
+        title:
+          type: string
+          description: The book title, e.g. A Practical Approach to API Design
+        authors:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookAuthor'
+          description: ''
+      description: "Summarizes a book that is stocked by the book store..."
+    BookAuthor:
+      title: BookAuthor
+      type: object
+      properties:
+        authorId:
+          type: string
+          description: An internal identifier that references the author
+        fullName:
+          type: string
+          description: The full name of the author, e.g. D. Keith Casey
+      description: "Represents a single author for a book. Since a book may have more than one author, ..."

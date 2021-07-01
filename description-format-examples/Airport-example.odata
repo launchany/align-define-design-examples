@@ -1,0 +1,35 @@
+GET /OData/Airports?$filter=contains(Location/Address, 'San Francisco')
+
+{
+    "@odata.context": "/OData/$metadata#Airports",
+    "value": [
+        {
+            "@odata.id": "/OData/Airports('KSFO')",
+            "@odata.editLink": "/OData/Airports('KSFO')",
+            "IcaoCode": "KSFO",
+            "Name": "San Francisco International Airport",
+            "IataCode": "SFO",
+            "Location": {
+                "Address": "South McDonnell Road, San Francisco, CA 94128",
+                "City": {
+                    "CountryRegion": "United States",
+                    "Name": "San Francisco",
+                    "Region": "California"
+                },
+                "Loc": {
+                    "type": "Point",
+                    "coordinates": [
+                        -122.374722222222,
+                        37.6188888888889
+                    ],
+                    "crs": {
+                        "type": "name",
+                        "properties": {
+                            "name": "EPSG:4326"
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

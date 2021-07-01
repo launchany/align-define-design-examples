@@ -1,0 +1,17 @@
+sequenceDiagram
+    participant Customer
+    participant Shopping API
+
+    Customer->>Shopping API: GET /books
+    Shopping API-->>Customer: Books[]
+    Customer->>Shopping API: POST /carts { bookId: 12345, qty: 1 }
+    Shopping API-->>Customer: Cart { cartId: 456 }
+    Customer->>Shopping API: DELETE /carts/456/items/1
+
+    Customer->>Shopping API: POST /books/search { q: "API" }
+    Shopping API-->>Customer: Books[]
+    Customer->>Shopping API: POST /carts/456/items { bookId: 12345, qty: 1 }
+    Shopping API-->>Customer: Cart { cartId: 456, ... }
+
+    Customer->>Shopping API: GET /carts/456
+    Shopping API-->>Customer: Cart  { cartId: 456, ... }

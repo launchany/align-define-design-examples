@@ -1,0 +1,24 @@
+sequenceDiagram
+    participant Customer
+    participant Shopping API
+    participant Order Creation API
+    participant Payment Processing API
+
+    Customer->>Shopping API: listBooks()
+    Shopping API-->>Customer: Books[]
+    Customer->>Shopping API: addBookToCart(bookId)
+    Shopping API-->>Customer: Cart
+    Customer->>Shopping API: removeBookFromCart(bookId)
+
+    Customer->>Shopping API: searchBooks(searchQuery)
+    Shopping API-->>Customer: Books[]
+    Customer->>Shopping API: addBookToCart(bookId)
+    Shopping API-->>Customer: Cart
+
+    Customer->>Shopping API: viewCart()
+    Shopping API-->>Customer: Cart
+    Customer->>Order Creation API: createOrderFromCart(cartId)
+    Order Creation API-->>Customer: Order
+
+    Customer->>Payment Processing API: payForOrder(orderId)
+    Payment Processing API-->>Customer: PaymentDetails

@@ -1,0 +1,36 @@
+{
+  "$id": "https://example.com/BookSummary.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Summarizes a book that is stocked by the book store...",
+  "type": "object",
+  "properties": {
+    "bookId": {
+      "type": "string"
+    },
+    "isbn": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "authors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/BookAuthor"
+      }
+    }
+  },
+  "definitions": {
+    "BookAuthor": {
+      "type": "object",
+      "properties": {
+        "authorId": {
+          "type": "string"
+        },
+        "fullName": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

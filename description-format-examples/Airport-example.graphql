@@ -1,0 +1,29 @@
+POST /graphql
+
+{
+  airports(iataCode : "SFO")
+}
+
+{ 
+  "data" : {
+    {
+      "Name": "San Francisco International Airport",
+      "iataCode": "SFO",
+      "Location": {
+        "Address": "South McDonnell Road, San Francisco, CA 94128",
+        "City": {
+          "CountryRegion": "United States",
+          "Name": "San Francisco",
+          "Region": "California"
+        },
+        "Loc": {
+          "type": "Point",
+          "coordinates": [
+            -122.374722222222,
+            37.6188888888889
+          ]
+        }
+      }
+    }
+  }
+}

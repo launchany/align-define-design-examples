@@ -1,0 +1,498 @@
+openapi: 3.0.0
+info:
+  title: Bookstore Shopping API - REST Example
+  description: |
+    Supports the shopping experience of an online bookstore, including browsing and searching for available books and shopping cart management.
+    
+    The Order Creation API is used to convert the shopping cart into an order that is prepared to accept shipping details, payment, and fulfillment tracking.
+    
+    The API includes the following shopping operations by capability:
+      
+    | Capability          | Operation                               |
+    |---------------------|-----------------------------------------|
+    | List Recent Books   | List Recent Books In Store              |
+    | List Recent Books   | Search for a book by topic or keyword   |
+    | List Recent Books   | View Book Details                       |  
+    | Place an Order      | Create Cart                             |
+    | Place an Order      | Add Book to Cart                        |
+    | Place an Order      | Remove Book from the Cart               |
+    | Place an Order      | Modify Book in Cart                     |
+    | Place an Order      | View Cart with Totals                   |
+    
+  contact: {}
+  version: '1.0'
+servers:
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: www.example.com/shop
+paths:
+  /books:
+    get:
+      tags:
+      - Books
+      summary: Returns a paginated list of available books
+      description: "Returns a paginated list of available books based on the search criteria provided. If no search criteria is provided, books are returned in alphabetical order. \n"
+      operationId: ListBooks
+      parameters:
+      - name: q
+        in: query
+        description: A query string to use for filtering books by title and description. If not provided, all available books will be listed. Note that the query argument 'q' is a common standard for general search queries
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: daysSinceBookReleased
+        in: query
+        description: A query string to use for filtering books released within the last number of days, e.g. 7 means in the last 7 days. The default value of null indicates no time filtering is applied. Maximum number of days to filter is 30 days since today
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+      - name: offset
+        in: query
+        description: A offset from which the list of books are retrieved, where an offset of 0 means the first page of results. Default is an offset of 0
+        style: form
+        explode: true
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be included in API call, defaulting to 25 records at a time if not provided
+        style: form
+        explode: true
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          format: int32
+          default: 25
+      - name: Authorization
+        in: header
+        description: An OAuth 2.0 access token that authorizes your app to call this endpoint. For more information on how to obtain an access token, go to the "Getting Access" section.
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: Client-Id
+        in: header
+        description: Client id consuming the api
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        description: Content the client sends in request e.g. application/json.
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: Client-Correlation-Id
+        in: header
+        description: It is an optional field that clients can provide to track traffic across different APIs. Clients who utilize this are responsible for generating the value, guaranteeing uniqueness, and providing it as a Header in every request.
+        style: simple
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListBooksResponse'
+        401:
+          description: Request failed, This is the response received when a request is made with invalid API credentials
+        403:
+          description: Request failed, This is the response received when a request is made with valid API credentials towards an API endpoint or resource you do not have access to.
+      deprecated: false
+  /books/{bookId}:
+    get:
+      tags:
+      - Books
+      summary: Retrieves the full details about a book
+      description: "Retrieves the full details about a book by the provided bookId. Details provided include: title, ISBN, plain text description, and the list of authors \n"
+      operationId: ViewBookDetails
+      parameters:
+      - name: bookId
+        in: path
+        description: The book identifier to be retrieved
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookDetails'
+        401:
+          description: Request failed, This is the response received when a request is made with invalid API credentials
+        403:
+          description: Request failed, This is the response received when a request is made with valid API credentials towards an API endpoint or resource you do not have access to.
+        404:
+          description: Request failed, This is the response received when a request is made and there no data is found for the bookId path parameter.
+      deprecated: false
+  /carts/{cartId}:
+    get:
+      tags:
+      - Carts
+      summary: Retrieves the full details about a cart
+      description: |
+        Retrieves the full details about a cart by the provided identifier. Details provided include: the status of the cart, the list of books + quantities, and the total cost
+      operationId: ViewCartDetails
+      parameters:
+      - name: cartId
+        in: path
+        description: The cart identifier to be retrieved
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartDetails'
+        401:
+          description: Request failed, This is the response received when a request is made with invalid API credentials
+        403:
+          description: Request failed, This is the response received when a request is made with valid API credentials towards an API endpoint or resource you do not have access to.
+        404:
+          description: Request failed, This is the response received when a request is made and there no data is found for the path parameter.
+      deprecated: false
+  /carts:
+    post:
+      tags:
+      - Carts
+      summary: Creates a new cart with a single item to begin the shopping process
+      description: "Creates a new cart with a single item to begin the shopping process. The workflow allows the customer to add a quantity of books to the cart as cart items. These items may be manipulated directly prior to creating an order, similar to any online shopping cart experience. Once ready, use the CreateOrder operation to convert the cart into an order and apply payment.\n      \n"
+      operationId: CreateNewCart
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCart'
+        required: true
+      responses:
+        201:
+          description: Created
+          headers:
+            Location:
+              description: Specifies the URL of the newly created resource
+              content:
+                text/plain:
+                  schema:
+                    type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartDetails'
+        400:
+          description: Request failed, refer to Common HTTP 400 Response Body for details
+        401:
+          description: Request failed, This is the response received when a request is made with invalid API credentials
+        403:
+          description: Request failed, This is the response received when a request is made with valid API credentials towards an API endpoint or resource you do not have access to.
+        500:
+          description: General server error, This is the response received when a request is made towards API but the API could not fulfill the request due to factors on the API side.
+      deprecated: false
+  /carts/{cartId}/items:
+    post:
+      tags:
+      - CartItems
+      summary: Adds a new Book to an existing Cart as a CartItem
+      description: >
+        Adds a new Book to an existing Cart as a CartItem, which includes the quantity of books desired. Recalculates the cart total, and returns the updated cart details
+      operationId: AddBookToCart
+      parameters:
+      - name: cartId
+        in: path
+        description: The cart identifier to be retrieved
+        required: true
+        style: simple
+        schema:
+          type: string
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCartItem'
+        required: false
+      responses:
+        201:
+          description: Created
+          headers:
+            Location:
+              description: Specifies the URL of the newly created resource
+              content:
+                text/plain:
+                  schema:
+                    type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartDetails'
+        401:
+          description: Request failed, This is the response received when a request is made with invalid API credentials
+        403:
+          description: Request failed, This is the response received when a request is made with valid API credentials towards an API endpoint or resource you do not have access to.
+        404:
+          description: Request failed, This is the response received when a request is made and there no data is found for the path parameter.
+        409:
+          description: Request failed due to the cart being marked as archived once it has been converted to an order and no longer editable
+      deprecated: false
+  /carts/{cartId}/items/{cartItemId}:
+    patch:
+      tags:
+      - CartItems
+      summary: Modifies the quantity of a CartItem in an existing Cart
+      description: >
+        Modifies the quantity of a CartItem in an existing Cart, recalculates the cart total, and returns the updated cart details.
+      operationId: ModifyBookInCart
+      parameters:
+      - name: cartId
+        in: path
+        description: The Cart identifier to be retrieved
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: cartItemId
+        in: path
+        description: The CartItem identifier to be retrieved
+        required: true
+        style: simple
+        schema:
+          type: string
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModifyCartItem'
+        required: false
+      responses:
+        200:
+          description: Modified the cart item successfully. The updated cart is returned, including an updated cart total
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartDetails'
+        401:
+          description: Request failed, This is the response received when a request is made with invalid API credentials
+        403:
+          description: Request failed, This is the response received when a request is made with valid API credentials towards an API endpoint or resource you do not have access to.
+        404:
+          description: Request failed, This is the response received when a request is made and there no data is found for the path parameter.
+        409:
+          description: Request failed due to the cart being marked as archived once it has been converted to an order and no longer editable
+      deprecated: false
+    delete:
+      tags:
+      - CartItems
+      summary: Removes a CartItem from an existing Cart
+      description: "Removes a CartItem from an existing Cart, recalculates the cart total, and returns the updated cart details. Please note that since the cart has been recalculated and returned, the response code for a successful deletion of the cart item is a 200 rather than the default of a 204 when there is no response payload. \n"
+      operationId: RemoveBookFromCart
+      parameters:
+      - name: cartId
+        in: path
+        description: The Cart identifier to be retrieved
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: cartItemId
+        in: path
+        description: The CartItem identifier to be retrieved
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        200:
+          description: Deleted the cart item successfully
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartDetails'
+        401:
+          description: Request failed, This is the response received when a request is made with invalid API credentials
+        403:
+          description: Request failed, This is the response received when a request is made with valid API credentials towards an API endpoint or resource you do not have access to.
+        404:
+          description: Request failed, This is the response received when a request is made and there no data is found for the path parameter.
+        409:
+          description: Request failed due to the cart being marked as archived once it has been converted to an order and no longer editable
+      deprecated: false
+components:
+  schemas:
+    ListBooksResponse:
+      title: ListBooksResponse
+      type: object
+      properties:
+        books:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookSummary'
+          description: ''
+      description: "A list of book summaries as a result of a list or filter request. The following hypermedia links are offered:\n  \n  - next: (optional) indicates the next page of results is available\n  - previous: (optional) indicates a previous page of results is available\n  - self: a link to the current page of results\n  - first: a link to the first page of results\n  - last: a link to the last page of results"
+    BookSummary:
+      title: BookSummary
+      type: object
+      properties:
+        bookId:
+          type: string
+          description: An internal identifier, separate from the ISBN, that identifies the book within the inventory
+        isbn:
+          type: string
+          description: The ISBN of the book
+        title:
+          type: string
+          description: The book title, e.g. A Practical Approach to API Design
+        authors:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookAuthor'
+          description: ''
+      description: "Summarizes a book that is stocked by the book store. The following hypermedia links are offered:\n  \n  - bookDetails: link to fetch the book details"
+    BookDetails:
+      title: BookDetails
+      type: object
+      properties:
+        bookId:
+          type: string
+          description: An internal identifier, separate from the ISBN, that identifies the book within the inventory
+        isbn:
+          type: string
+          description: The ISBN of the book
+        title:
+          type: string
+          description: The book title, e.g. A Practical Approach to API Design
+        description:
+          type: string
+          description: A description of the book in plain text format
+        authors:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookAuthor'
+          description: ''
+      description: "Details about a book that is stocked by the book store. The following hypermedia links are offered:\n  \n  - self: link to fetch the book details"
+    BookAuthor:
+      title: BookAuthor
+      type: object
+      properties:
+        authorId:
+          type: string
+          description: An internal identifier that references the author
+        fullName:
+          type: string
+          description: The full name of the author, e.g. D. Keith Casey
+      description: "Represents a single author for a book. Since a book may have more than one author, books will contain an array of BookAuthors. The following hypermedia links are offered:\n  \n  - self: link to fetch the author details"
+    CartItem:
+      title: CartItem
+      type: object
+      properties:
+        cartItemId:
+          type: string
+          description: An internal identifier for the cart item inside the cart
+        bookId:
+          type: string
+          description: The book that is being referenced within the order
+        title:
+          type: string
+          description: The book title, e.g. A Practical Approach to API Design
+        quantity:
+          minimum: 1
+          type: integer
+          description: The number of copies of the book requested
+          format: int32
+      description: "Captures a book with the quantity desired in a cart. The following hypermedia links are offered:\n  \n  - self: link to fetch the cart item details\n  - bookDetails: link to fetch the book details"
+    NewCart:
+      title: NewCart
+      required:
+      - bookId
+      - quantity
+      type: object
+      properties:
+        bookId:
+          type: string
+          description: The book that is being added to the cart
+        quantity:
+          minimum: 1
+          type: integer
+          description: The number of copies of the book to be added to the cart
+          format: int32
+      description: Creates a new cart with the initial cart item added
+    NewCartItem:
+      title: NewCartItem
+      required:
+      - bookId
+      - quantity
+      type: object
+      properties:
+        bookId:
+          type: string
+          description: The book that is being added to the cart
+        quantity:
+          minimum: 1
+          type: integer
+          description: The number of copies of the book to be added to the cart
+          format: int32
+      description: Specifies a book and quantity to add to a cart
+    ModifyCartItem:
+      title: ModifyCartItem
+      required:
+      - quantity
+      type: object
+      properties:
+        quantity:
+          minimum: 1
+          type: integer
+          description: The number of copies of the book to adjust the cart item to
+          format: int32
+      description: Modifies an existing cart item's quantity
+    CartDetails:
+      title: CartDetails
+      type: object
+      properties:
+        cartId:
+          type: string
+          description: An internal identifier for the cart
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+          description: ''
+        totalCostInCents:
+          minimum: 0
+          type: integer
+          description: The total cost of the cart
+          format: int32
+        cartStatus:
+          $ref: '#/components/schemas/CartStatus'
+      description: Contains the full list of books and quantities contained within the cart, along with the total cost of the cart
+    CartStatus:
+      title: CartStatus
+      enum:
+      - Active
+      - Converted
+      - Abandoned
+      type: string
+      description: The current status of the cart

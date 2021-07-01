@@ -1,0 +1,71 @@
+# API Name: "Bookstore Shopping API Example"
+#
+# The Bookstore Example REST-based API supports the shopping experience of an online bookstore. The API includes the following capabilities and operations...
+#
+
+type Query {
+    listBooks(input: ListBooksInput!): BooksResponse!
+    searchBooks(input: SearchBooksInput!): BooksResponse!
+    getCart(input: GetCartInput!): Cart!
+    getAuthorDetails(input: GetAuthorDetailsInput!): BookAuthor!
+}
+
+type Mutation {
+    clearCart(): Cart
+    addItemToCart(input: AddCartItemInput!): Cart
+    removeItemFromCart(input: RemoveCartItemInput!): Cart
+}
+
+type BooksResponse {
+    books: [BookSummary!]
+}
+
+type BookSummary {
+    bookId: String!
+    isbn: String!
+    title: String!
+    authors: [BookAuthor!]
+}
+
+type BookAuthor {
+    authorId: String!
+    fullName: String!
+}
+
+type Cart {
+    cartId: String!
+    cartItems: [CartItem!]
+}
+
+type CartItem {
+    cartItemId: String!
+    bookId: String!
+    quantity: Int!
+}
+
+input ListBooksInput {
+    offset: Int!
+    limit: Int!
+}
+
+input SearchBooksInput {
+    q: String!
+    offset: Int!
+    limit: Int!
+}
+
+input GetAuthorDetailsInput {
+    authorId: String!
+}
+
+input AddCartItemInput {
+    cartId: String!
+    bookId: String!
+    quantity: Int!
+}
+
+input RemoveCartItemInput {
+    cartId: String!
+    cartItemId: String!
+}
+

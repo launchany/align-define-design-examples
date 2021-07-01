@@ -1,0 +1,36 @@
+<alps version="1.0">
+  <doc format="text">A contact list.</doc>
+  <link rel="help" href="http://example.org/help/contacts.html" />
+
+  <!-- a hypermedia control for returning BookSummaries -->
+  <descriptor id="collection" type="safe" rt="BookSummary">
+    <doc>
+      Provides a paginated list of books based on the search criteria provided.
+    </doc>
+    <descriptor id="q" type="semantic">
+      <doc>A query string to use for filtering books by title and description.</doc>
+    </descriptor>
+  </descriptor>
+  
+  <!--  a contact: one or more of these may be returned -->
+  <descriptor id="BookSummary" type="semantic">
+    <descriptor id="bookId" type="semantic">
+      <doc>An internal identifier, separate from the ISBN, that identifies the book within the inventory</doc>
+    </descriptor>
+    <descriptor id="isbn" type="semantic">
+      <doc>The ISBN of the book</doc>
+    </descriptor>
+    <descriptor id="title" type="semantic">
+      <doc>The book title, e.g. A Practical Approach to API Design</doc>
+    </descriptor>
+    <descriptor id="authors" type="semantic" rel="collection">
+      <doc>Summarizes a book that is stocked by the book store</doc>
+      <descriptor id="authorId" type="semantic">
+        <doc>An internal identifier that references the author</doc>
+      </descriptor>
+      <descriptor id="fullName" type="semantic">
+        <doc>The full name of the author, e.g. D. Keith Casey</doc>
+      </descriptor>
+    </descriptor>
+  </descriptor>
+</alps>

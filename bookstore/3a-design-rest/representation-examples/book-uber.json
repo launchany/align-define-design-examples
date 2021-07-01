@@ -1,0 +1,75 @@
+{
+  "uber" :
+  {
+    "version" : "1.0",
+    "data" :
+      [
+
+	  {"rel" : ["self"], "url" : "http://example.org/"},
+	  {"rel" : ["profile"], "url" : "http://example.org/profiles/books"},
+          {
+            "name" : "searchBooks",
+            "rel" : ["search","collection"],
+            "url" : "http://example.org/books/search?q={query}",
+            "templated" : "true"
+          },
+	  {
+              "id" : "book-12345",
+              "rel" : ["collection","http://example.org/rels/books"],
+              "url" : "http://example.org/books/12345",
+              "data" :
+	      [
+		  {
+		      "name" : "bookId",
+		      "value" : "12345",
+		      "label" : "Book ID"
+		  },
+		  {
+		      "name" : "isbn",
+		      "value" : "978-0321834577",
+		      "label" : "ISBN",
+		      "rel" : ["https://schema.org/isbn"]
+		  },
+		  {
+		      "name" : "title",
+		      "value" : "Example Book",
+		      "label" : "Book Title",
+		      "rel" : ["https://schema.org/name"]
+		  },
+		  {
+		      "name" : "description",
+		      "value" : "With Implementing Domain-Driven Design, Vaughn has made an important contribution not only to the literature of the Domain-Driven Design community, but also to the literature of the broader enterprise application architecture field.",
+		      "label" : "Book Description",
+		      "rel" : ["https://schema.org/description"]
+		  },
+		  {
+		      "name" : "authors",
+		      "rel" : ["collection","http://example.org/rels/authors"],
+		      "data" :
+		      [
+			  {
+			      "id" : "author-765",
+			      "rel" : ["http://schema.org/Person"],
+			      "url" : "http://example.org/authors/765",
+			      "data" :
+			      [
+				  {
+				      "name" : "authorId",
+				      "value" : "765",
+				      "label" : "Author ID"
+				  },
+				  {
+				      "name" : "fullName",
+				      "value" : "Vaughn Vernon",
+				      "label" : "Full Name",
+				      "rel" : "https://schema.org/name"
+				  }
+			      ]
+			  }
+		      ]
+		  },
+	      ]
+	  }
+      ]
+  }
+}

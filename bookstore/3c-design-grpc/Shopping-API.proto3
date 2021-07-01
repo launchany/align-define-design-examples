@@ -1,0 +1,62 @@
+service ShoppingCart {
+  rpc ListBooks(ListBooksRequest) returns (ListBooksResponse) {}
+
+  rpc SearchBooks(SearchBooksRequest) returns (SearchBooksResponse) {}
+  
+  rpc ViewCart(ViewCartRequest) returns (Cart) {}
+  
+  rpc ClearCart(ClearCartRequest) returns (Cart) {}
+  
+  rpc AddItemToCart(AddCartItemRequest) returns (Cart) {}
+  
+  rpc RemoveItemFromCart(RemoveCartItemRequest) returns (Cart) {}
+  
+  rpc GetAuthorDetails() returns (Author) {}
+
+}
+
+message ListBooksRequest {
+  string category_id = 1;
+  string release_date = 2;
+}
+
+message SearchBooksRequest {
+  string query = 1;
+}
+
+message SearchBooksResponse {
+  int32 page_number = 1;
+  int32 result_per_page = 2 [default = 10];
+  repeated Book books = 3;
+}
+
+message ViewCartRequest {
+  string cart_id = 1;
+}
+
+message ClearCartRequest {
+  string cart_id = 1;
+}
+
+message AddCartItemRequest {
+  string cart_id = 1;
+  string book_id = 2;
+  int32 quantity = 3;
+}
+
+message RemoveCartItemRequest {
+  string cart_id = 1;
+  string cart_item_id = 2;
+}
+
+message CartItem {
+  string cart_item_id = 1;
+  Book book = 2;
+  int32 quantity = 3;
+}
+
+message Cart {
+  string cart_id = 1;
+  repeated CartItem cart_items = 2;
+}
+

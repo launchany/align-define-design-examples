@@ -1,0 +1,43 @@
+asyncapi: 2.0.0
+info:
+  title: Shopping API Events
+  version: 1.0.0
+  description: |
+    An example of some of the events published during the bookstore's shopping cart experience...
+channels:
+  books.searched:
+    subscribe:
+      message:
+        $ref: '#/components/messages/BooksSearched'
+  carts.itemAdded:
+    subscribe:
+      message:
+        $ref: '#/components/messages/CartItemAdded'
+components:
+  messages:
+    BooksSearched:
+      payload:
+        type: object
+        properties:
+          queryStringFilter:
+            type: string
+            description: The query string used in the search filter
+          categoryIdFilter:
+            type: string
+            description: The category ID used in the search filter
+          releaseDateFilter:
+            type: string
+            description: The release date used in the search filter
+    CartItemAdded:
+      payload:
+        type: object
+        properties:
+          cartId:
+            type: string
+            description: The cartId where the book was added
+          bookId:
+            type: string
+            description: The book ID that was added to the cart
+          quantity:
+            type: integer
+            description: The quantity of books added
